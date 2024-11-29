@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'ReenieBeanie';
+  src: url('./assets/font/ReenieBeanie-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Container for Slider */
+.card-wrapper,
+.card-wrapper-right {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  position: relative;
+}
+.card-wrapper:hover,
+.card-wrapper-right:hover {
+  animation-play-state: paused; /* Pause when hovered */
+}
+/* Infinite Scroll Animations */
+.card-wrapper {
+  animation: slide-left-to-right 30s linear infinite;
+}
+
+.card-wrapper-right {
+  animation: slide-right-to-left 30s linear infinite;
+}
+
+/* Keyframes for sliding animations */
+@keyframes slide-left-to-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes slide-right-to-left {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Card Styles */
+.card {
+  flex-shrink: 0;
+  width: 300px;
+  min-width: 350px;
+  max-width: 400px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+  overflow: hidden;
+}
+
+.card:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Card Content Styling */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+
+
+
+
+
+
+
