@@ -57,18 +57,21 @@ function Form() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simpan data ke context, tetapi kartu tidak akan langsung ditampilkan
-    setCards((prevCards) => [
-      ...prevCards,
-      {
-        id: uuidv4(),
-        recipientName,
-        message,
-        song: selectedSong,
-        date: new Date(),
-        isVisible: false, // Tambahkan properti ini untuk membedakan apakah kartu sudah terlihat
-      },
-    ]);
+    const newCard = {
+      id: uuidv4(),
+      recipientName,
+      message,
+      song: selectedSong,
+      date: new Date(),
+      isVisible: false, // Tambahkan properti ini untuk membedakan apakah kartu sudah terlihat
+    };
+
+    // Simpan data ke context dan localStorage
+    setCards((prevCards) => {
+      const updatedCards = [...prevCards, newCard];
+      localStorage.setItem('cards', JSON.stringify(updatedCards)); // Simpan ke localStorage
+      return updatedCards;
+    });
 
     // Reset form setelah submit
     setRecipientName('');
@@ -78,8 +81,6 @@ function Form() {
 
     // Tampilkan notifikasi
     setIsSubmitted(true);
-
-    // Sembunyikan notifikasi setelah beberapa detik
     setTimeout(() => {
       setIsSubmitted(false);
     }, 3000);
