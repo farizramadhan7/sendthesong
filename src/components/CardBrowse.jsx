@@ -37,7 +37,7 @@ function CardBrowse({ hasSearched }) {
   const cardsToShow = hasSearched ? filteredCards : allCards;
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 mt-16 flex-grow">
+    <div className="w-full h-full max-w-2xl mx-auto p-4 mt-16 flex-grow">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
         {cardsToShow.length > 0 ? (
           cardsToShow.map((card) => {
@@ -52,20 +52,28 @@ function CardBrowse({ hasSearched }) {
                 href={`/cards/${id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl border bg-card text-card-foreground shadow relative w-full max-w-xs cursor-pointer overflow-hidden hover:bg-gray-950/[.05] transition-colors duration-200"
+                className="rounded-xl border bg-card text-card-foreground shadow relative w-full h-[200px] cursor-pointer overflow-hidden hover:bg-gray-950/[.05] transition-colors duration-200"
               >
-                <div className="flex flex-col space-y-1.5 p-4">
-                  <p className="text-sm font-medium text-gray-500">To: {recipientName}</p>
-                  <p className="mt-2 text-3xl text-gray-800" style={{ fontFamily: 'ReenieBeanie', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div className="flex flex-col space-y-1.5 p-4 ">
+                  <p className="text-sm font-medium text-gray-500 mb-6">To: {recipientName}</p>
+                  <p
+                    className="text-4xl text-gray-800 mt-8" // Pesan lebih ke bawah
+                    style={{
+                      fontFamily: 'ReenieBeanie',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {message}
                   </p>
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex items-center space-x-2 ">
                     {albumCover && (
-                      <img src={albumCover} alt="Album Cover" className="w-9 h-9 object-cover " />
+                      <img src={albumCover} alt="Album Cover" className="w-9 h-9 object-cover mt-9" />
                     )}
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-700">{songName}</p>
-                      <p className="text-xs text-gray-500">{artistName}</p>
+                      <p className="text-sm font-medium text-gray-700 mt-9">{songName}</p>
+                      <p className="text-xs text-gray-500 mt-9">{artistName}</p>
                     </div>
                   </div>
                 </div>
