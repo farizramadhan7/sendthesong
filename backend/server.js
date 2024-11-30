@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 5000;
+
+// Menggunakan port dari Vercel atau default ke 5000
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json()); // Untuk meng-handle JSON request
@@ -42,7 +44,7 @@ app.get('/api/cards/:id', (req, res) => {
   }
 });
 
-// Menjalankan server
+// Menjalankan server pada port yang ditentukan
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
