@@ -1,59 +1,33 @@
+// server.js (Node.js with Express)
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-
+const axios = require('axios');
 const app = express();
-const PORT = 5000;
+const port = 5000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+const clientId = '257d706bf30545b59fd06913413dba3e';
+const clientSecret = '032cf020561842e2b57e28e0333565ef';
 
-// Koneksi MongoDB
-mongoose.connect('mongodb://localhost:27017/cardsApp', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// Model Kartu
-const cardSchema = new mongoose.Schema({
-  recipientName: String,
-  message: String,
-  song: {
-    name: String,
-    artist: String,
-    album: String,
-    albumImageUrl: String,
-  },
-});
-
-const Card = mongoose.model('Card', cardSchema);
-
-// Route untuk mendapatkan semua kartu
-app.get('/api/cards', async (req, res) => {
+app.get('/getSpotifyToken', async (req, res) => {
+  const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+  
   try {
-    const cards = await Card.find();
-    res.status(200).json(cards);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const response = await axios.post(
+      'https://accounts.spotify.com/api/token',
+      'grant_type=client_credentials',
+      {
+        headers: {
+          Authorization: `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+    res.json({ access_token: response.data.access_token });
+  } catch (error) {
+    console.error('Error fetching Spotify token:', error);
+    res.status(500).send('Failed to get Spotify token');
   }
 });
 
-// Route untuk menyimpan kartu baru
-app.post('/api/cards', async (req, res) => {
-  const { recipientName, message, song } = req.body;
-  const newCard = new Card({ recipientName, message, song });
-
-  try {
-    await newCard.save();
-    res.status(201).json(newCard);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Menjalankan server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });

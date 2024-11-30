@@ -30,18 +30,18 @@ function Search({ setFilteredCards, setHasSearched }) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            stroke="currentColor"
             viewBox="0 0 24 24"
-            className="w-5 h-5"
-            aria-hidden="true"
+            stroke="currentColor"
+            className="w-4 h-4 mr-1"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 17l-4 4m0 0l-4-4m4 4V3"
+              strokeWidth={2}
+              d="M11 4a7 7 0 015.7 11.7l4.3 4.3-1.4 1.4-4.3-4.3A7 7 0 1111 4z"
             />
           </svg>
+          Search
         </button>
       </div>
     </div>
