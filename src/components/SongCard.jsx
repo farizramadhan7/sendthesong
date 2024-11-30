@@ -1,12 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useCardContext } from '../context/CardContext';
-import { format } from 'date-fns';
+import { format } from 'date-fns'; // Import format from date-fns
 
 function SongCard() {
-  const { id } = useParams(); // Ambil ID dari URL
+  const { id } = useParams();
   const { cards } = useCardContext();
-  const card = cards.find((card) => card.id === id); // Cari kartu berdasarkan ID
+  const card = cards.find(card => card.id === id);
 
   if (!card) {
     return <div>Card not found</div>;
@@ -38,7 +38,7 @@ function SongCard() {
           <div className="mt-8 w-full px-4 sm:px-8 lg:px-16">
             <p className="text-lg text-slate-700">Also, here's a message from the sender:</p>
             <p
-              className="text-4xl text-slate-500 mt-4  "
+              className="text-4xl text-slate-500 mt-4"
               style={{ fontFamily: 'ReenieBeanie' }}
             >
               {card.message}

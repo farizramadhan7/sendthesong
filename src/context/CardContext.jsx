@@ -1,48 +1,42 @@
-// src/context/CardContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
-// Membuat Context
 const CardContext = createContext();
 
-// Provider untuk membungkus aplikasi
 export const CardProvider = ({ children }) => {
-  // State untuk kartu, dengan inisialisasi dari localStorage
-  const [cards, setCards] = useState(() => {
-    const storedCards = localStorage.getItem('cards');
-    try {
-      return storedCards ? JSON.parse(storedCards) : [];
-    } catch (error) {
-      console.error("Error parsing localStorage cards:", error);
-      return [];
-    }
-  });
+  const [cards, setCards] = useState([]);
 
-  // Sinkronisasi kartu ke localStorage setiap kali `cards` berubah
+  // Fetch cards from the backend when the app starts
+  const fetchCards = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/cards');
+      setCards(response.data);
+    } catch (error) {
+      console.error("Error fetching cards:", error);
+    }
+  };
+
+  // Fetch cards on initial load
   useEffect(() => {
-    try {
-      localStorage.setItem('cards', JSON.stringify(cards));
-    } catch (error) {
-      console.error("Error saving cards to localStorage:", error);
-    }
-  }, [cards]);
+    fetchCards();
+  }, []);
 
-  // Fungsi untuk menyegarkan data dari localStorage (jika diperlukan)
-  const refreshCards = () => {
-    const storedCards = localStorage.getItem('cards');
+  // Function to add a new card
+  const addCard = async (newCard) => {
     try {
-      setCards(storedCards ? JSON.parse(storedCards) : []);
+      const response = await axios.post('http://localhost:5000/api/cards', newCard);
+      setCards((prevCards) => [...prevCards, response.data]);
     } catch (error) {
-      console.error("Error refreshing cards from localStorage:", error);
-      setCards([]);
+      console.error("Error adding card:", error);
     }
   };
 
   return (
-    <CardContext.Provider value={{ cards, setCards, refreshCards }}>
+    <CardContext.Provider value={{ cards, addCard }}>
       {children}
     </CardContext.Provider>
   );
 };
 
-// Hook untuk menggunakan CardContext
+// Custom hook to access CardContext values
 export const useCardContext = () => useContext(CardContext);

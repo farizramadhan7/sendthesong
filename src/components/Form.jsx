@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useCardContext } from '../context/CardContext'; // Pastikan import context dengan benar
+import { useCardContext } from '../context/CardContext'; // Import context
 import { v4 as uuidv4 } from 'uuid';
 
 function Form() {
@@ -10,8 +10,10 @@ function Form() {
   const [accessToken, setAccessToken] = useState('');
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false); // State untuk notifikasi
-  const { setCards } = useCardContext(); // Mengakses setCards dari context
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Access the addCard function from context
+  const { addCard } = useCardContext();
 
   const fetchAccessToken = async () => {
     try {
@@ -38,7 +40,7 @@ function Form() {
   const searchSongs = async (query) => {
     if (!accessToken) return;
     try {
-      const response = await axios.get(`https://api.spotify.com/v1/search`, {
+      const response = await axios.get('https://api.spotify.com/v1/search', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -57,29 +59,26 @@ function Form() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simpan data ke context, tetapi kartu tidak akan langsung ditampilkan
-    setCards((prevCards) => [
-      ...prevCards,
-      {
-        id: uuidv4(),
-        recipientName,
-        message,
-        song: selectedSong,
-        date: new Date(),
-        isVisible: false, // Tambahkan properti ini untuk membedakan apakah kartu sudah terlihat
-      },
-    ]);
+    // Use the addCard function from context to add a new card
+    addCard({
+      id: uuidv4(),
+      recipientName,
+      message,
+      song: selectedSong,
+      date: new Date(),
+      isVisible: false,
+    });
 
-    // Reset form setelah submit
+    // Reset form after submission
     setRecipientName('');
     setMessage('');
     setSongQuery('');
     setSelectedSong(null);
 
-    // Tampilkan notifikasi
+    // Show notification
     setIsSubmitted(true);
 
-    // Sembunyikan notifikasi setelah beberapa detik
+    // Hide notification after a few seconds
     setTimeout(() => {
       setIsSubmitted(false);
     }, 3000);
@@ -92,6 +91,7 @@ function Form() {
   return (
     <div className="space-y-8 w-full max-w-3xl mx-auto px-4 sm:px-0 mt-20">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Form Fields */}
         <div>
           <label className="block font-semibold mb-2 text-gray-700">Recipient Name</label>
           <input
