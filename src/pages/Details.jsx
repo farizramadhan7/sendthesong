@@ -17,10 +17,11 @@ function Details() {
       {/* Konten utama */}
       <main className="flex-grow container mx-auto px-4 py-8">
         {id ? (
-          <SongCard id={id} /> // Kirim ID ke SongCard
+          // Langsung kirim ID ke SongCard melalui props
+          <SongCard />
         ) : (
           <div className="text-center text-gray-600">
-            <p>Invalid or missing ID. Please check the URL.</p>
+            <p>ID is missing or invalid. Please check the URL.</p>
           </div>
         )}
       </main>

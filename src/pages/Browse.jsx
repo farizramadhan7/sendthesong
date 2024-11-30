@@ -4,6 +4,7 @@ import Search from '../components/Search';
 import CardBrowse from '../components/CardBrowse';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase/firebaseConfig';
+import Footer from '../components/Footer';
 
 function Browse() {
   const [cards, setCards] = useState([]); // Menyimpan semua kartu dari Firebase
@@ -25,14 +26,17 @@ function Browse() {
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <Search
-        cards={cards}
-        setFilteredCards={setFilteredCards}
-        setHasSearched={setHasSearched}
-      />
-      <CardBrowse filteredCards={filteredCards} hasSearched={hasSearched} />
+      <div className="flex-grow">
+        <Search
+          cards={cards}
+          setFilteredCards={setFilteredCards}
+          setHasSearched={setHasSearched}
+        />
+        <CardBrowse filteredCards={filteredCards} hasSearched={hasSearched} />
+      </div>
+      <Footer />
     </div>
   );
 }
