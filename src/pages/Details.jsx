@@ -8,17 +8,27 @@ function Details() {
   const { id } = useParams(); // Ambil UUID dari URL
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Navbar */}
-      <Navbar />
+      <header>
+        <Navbar />
+      </header>
 
       {/* Konten utama */}
-      <main className="flex-grow">
-        <SongCard id={id} /> {/* Kirim id ke SongCard */}
+      <main className="flex-grow container mx-auto px-4 py-8">
+        {id ? (
+          <SongCard id={id} /> // Kirim ID ke SongCard
+        ) : (
+          <div className="text-center text-gray-600">
+            <p>Invalid or missing ID. Please check the URL.</p>
+          </div>
+        )}
       </main>
 
       {/* Footer */}
-      <Footer />
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 }

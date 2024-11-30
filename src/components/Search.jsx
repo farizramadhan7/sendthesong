@@ -4,9 +4,9 @@ function Search({ cards, setFilteredCards, setHasSearched }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = () => {
-    // Filter cards berdasarkan nama penerima
+    // Filter cards berdasarkan nama penerima yang sesuai secara penuh (case-insensitive)
     const filtered = cards.filter(({ recipientName }) =>
-      recipientName.toLowerCase().includes(searchQuery.toLowerCase())
+      recipientName.toLowerCase() === searchQuery.toLowerCase()
     );
 
     setFilteredCards(filtered); // Set hasil pencarian ke state di CardBrowse

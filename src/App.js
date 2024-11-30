@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Submit from './pages/Submit'; // Import halaman Submit
+import Submit from './pages/Submit';
 import Browse from './pages/Browse';
-import Details from './pages/Details'; // Pastikan impor halaman Details
-import Support from './pages/Support'; // Pastikan halaman Support ada
+import Details from './pages/Details';
+import Support from './pages/Support';
 import { CardProvider } from './context/CardContext';
-import Search from './components/Search'; // Impor Search component
-import CardBrowse from './components/CardBrowse'; // Impor CardBrowse component
+import Search from './components/Search';
+import CardBrowse from './components/CardBrowse';
 
 function App() {
-  const [filteredCards, setFilteredCards] = useState([]); // Initialize as an empty array
+  const [filteredCards, setFilteredCards] = useState([]);
 
   return (
     <CardProvider>
@@ -20,14 +20,13 @@ function App() {
           <Route path="/submit" element={<Submit />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/cards/:id" element={<Details />} />
-          <Route path="/support" element={<Support />} /> {/* Rute untuk halaman Support */}
-          {/* Rute untuk halaman pencarian */}
+          <Route path="/support" element={<Support />} />
           <Route
             path="/search"
             element={
               <>
-                <Search setFilteredCards={setFilteredCards} /> {/* Panggil Search untuk input */}
-                <CardBrowse filteredCards={filteredCards} /> {/* Panggil CardBrowse untuk menampilkan hasil */}
+                <Search setFilteredCards={setFilteredCards} />
+                <CardBrowse filteredCards={filteredCards} />
               </>
             }
           />

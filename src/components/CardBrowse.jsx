@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { ref, onValue } from 'firebase/database'; // Import ref and onValue
+import { database } from '../firebase/firebaseConfig'; // Import your Firebase database instance
 
-function CardBrowse({ filteredCards }) {
+function CardBrowse({ hasSearched }) {
+  const [filteredCards, setFilteredCards] = useState([]); // Initialize state
+  const [allCards, setAllCards] = useState([]); // State untuk menyimpan semua card
+
+  useEffect(() => {
+    // Getting data from Firebase Realtime Database
+    const cardsRef = ref(database, 'cards'); // 'cards' is the path in Firebase
+    
+    // Listening for real-time changes to data
+    onValue(cardsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Converting data into an array and updating the state
+        const cardArray = Object.keys(data).map((key) => {
+          const card = data[key];
+          return {
+            id: key,
+            recipientName: card.recipientName,
+            message: card.message,
+            song: card.song, // Store song data (including name, artist, album, etc.)
+          };
+        });
+        setAllCards(cardArray); // Simpan semua card untuk digunakan dalam pencarian
+        setFilteredCards(cardArray); // Set filtered cards to all cards initially
+      }
+    });
+
+    // Cleanup when the component unmounts
+    return () => setFilteredCards([]); // Clear filtered cards on unmount
+  }, []); // Empty array ensures it runs only once when the component mounts
+
+  // Jika pencarian sudah dilakukan, tampilkan filteredCards
+  const cardsToShow = hasSearched ? filteredCards : allCards;
+
   return (
     <div className="w-full max-w-2xl mx-auto p-4 mt-16 flex-grow">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
-        {filteredCards.length > 0 ? (
-          filteredCards.map((card) => {
+        {cardsToShow.length > 0 ? (
+          cardsToShow.map((card) => {
             const { id, recipientName, message, song } = card;
             const { name: songName, artists, album } = song || {};
             const albumCover = album?.images[2]?.url;
@@ -21,24 +56,12 @@ function CardBrowse({ filteredCards }) {
               >
                 <div className="flex flex-col space-y-1.5 p-4">
                   <p className="text-sm font-medium text-gray-500">To: {recipientName}</p>
-                  <p
-                    className="mt-2 text-3xl text-gray-800"
-                    style={{
-                      fontFamily: 'ReenieBeanie',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                  <p className="mt-2 text-3xl text-gray-800" style={{ fontFamily: 'ReenieBeanie', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {message}
                   </p>
                   <div className="flex items-center space-x-2 mt-2">
                     {albumCover && (
-                      <img
-                        src={albumCover}
-                        alt="Album Cover"
-                        className="w-9 h-9 object-cover"
-                      />
+                      <img src={albumCover} alt="Album Cover" className="w-9 h-9 object-cover " />
                     )}
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-gray-700">{songName}</p>
