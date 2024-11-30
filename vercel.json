@@ -1,16 +1,10 @@
 {
     "version": 2,
     "builds": [
-      {
-        "src": "sendthesong/sendthesong/backend/server.js",
-        "use": "@vercel/node"
-      }
+      { "src": "../backend/server.js", "use": "@vercel/node" }
     ],
     "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "sendthesong/sendthesong/backend/server.js"
-      }
+      { "src": "/api/(.*)", "dest": "../backend/server.js" }
     ]
   }
   
