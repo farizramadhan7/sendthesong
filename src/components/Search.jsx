@@ -6,8 +6,8 @@ function Search({ setFilteredCards, setHasSearched }) {
   const { cards } = useCardContext();
 
   const handleSearch = () => {
-    const filtered = cards.filter((card) =>
-      card.recipientName.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = cards.filter(
+      (card) => card.recipientName.toLowerCase() === searchQuery.toLowerCase()
     );
     setFilteredCards(filtered);
     setHasSearched(true); // Mark as searched
