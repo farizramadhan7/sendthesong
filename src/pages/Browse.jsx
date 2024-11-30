@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Search from '../components/Search';
 import CardBrowse from '../components/CardBrowse';
+import { ref, onValue } from 'firebase/database';
+import { database } from '../firebase/firebaseConfig';
 
 function Browse() {
-  const [filteredCards, setFilteredCards] = useState([]); // State untuk hasil pencarian
-  const [hasSearched, setHasSearched] = useState(false); // State untuk status pencarian
+  const [cards, setCards] = useState([]); // Menyimpan semua kartu dari Firebase
+  const [filteredCards, setFilteredCards] = useState([]); // Menyimpan hasil pencarian
+  const [hasSearched, setHasSearched] = useState(false); // Menandai apakah pencarian telah dilakukan
+
+  useEffect(() => {
+    const cardsRef = ref(database, 'cards');
+    onValue(cardsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const cardArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        setCards(cardArray);
+      }
+    });
+  }, []);
 
   return (
     <div>
       <Navbar />
-      {/* Kirim fungsi setFilteredCards dan setHasSearched ke Search */}
       <Search
+        cards={cards}
         setFilteredCards={setFilteredCards}
         setHasSearched={setHasSearched}
       />
-      {/* Kirim hasil pencarian dan status pencarian ke CardBrowse */}
-      <CardBrowse
-        filteredCards={filteredCards}
-        hasSearched={hasSearched}
-      />
+      <CardBrowse filteredCards={filteredCards} hasSearched={hasSearched} />
     </div>
   );
 }

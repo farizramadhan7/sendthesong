@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useCardContext } from '../context/CardContext'; // Import context
-import { v4 as uuidv4 } from 'uuid';
+import { ref, push } from 'firebase/database'; // Hanya mengimpor yang diperlukan
+import { v4 as uuidv4 } from 'uuid'; // Menghasilkan ID unik untuk data
+import axios from 'axios'; // Menggunakan axios untuk HTTP request
+
+// Firebase database reference
+import { database } from '../firebase/firebaseConfig'; // Import Firebase Config
 
 function Form() {
   const [songQuery, setSongQuery] = useState('');
@@ -12,13 +15,11 @@ function Form() {
   const [message, setMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Access the addCard function from context
-  const { addCard } = useCardContext();
-
+  // Fetch Spotify access token
   const fetchAccessToken = async () => {
     try {
-      const clientId = '257d706bf30545b59fd06913413dba3e';
-      const clientSecret = '032cf020561842e2b57e28e0333565ef';
+      const clientId = '257d706bf30545b59fd06913413dba3e'; // Ganti dengan clientId Anda
+      const clientSecret = '032cf020561842e2b57e28e0333565ef'; // Ganti dengan clientSecret Anda
       const authString = btoa(`${clientId}:${clientSecret}`);
 
       const response = await axios.post(
@@ -37,6 +38,7 @@ function Form() {
     }
   };
 
+  // Search for songs on Spotify
   const searchSongs = async (query) => {
     if (!accessToken) return;
     try {
@@ -56,34 +58,49 @@ function Form() {
     }
   };
 
+  // Submit form data
+  // Submit form data
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Use the addCard function from context to add a new card
-    addCard({
+  
+    const newCard = {
       id: uuidv4(),
       recipientName,
       message,
       song: selectedSong,
-      date: new Date(),
-      isVisible: false,
-    });
-
-    // Reset form after submission
+      date: new Date().toISOString(),
+      isVisible: true,
+    };
+  
+    // Log data sebelum melakukan push ke Firebase untuk memastikan data sudah ada
+    console.log('Preparing to submit data:', newCard);
+  
+    // Push the new card to Firebase Realtime Database
+    push(ref(database, 'cards'), newCard)
+      .then(() => {
+        console.log('Data successfully added to Firebase:', newCard); // Log data jika berhasil
+      })
+      .catch((error) => {
+        console.error('Error adding data to Firebase:', error); // Log error jika gagal
+      });
+  
+    // Reset form fields
     setRecipientName('');
     setMessage('');
     setSongQuery('');
     setSelectedSong(null);
-
-    // Show notification
+  
+    // Show submission notification
     setIsSubmitted(true);
-
+  
     // Hide notification after a few seconds
     setTimeout(() => {
       setIsSubmitted(false);
     }, 3000);
   };
+  
 
+  // Fetch Spotify access token on component mount
   useEffect(() => {
     fetchAccessToken();
   }, []);
@@ -91,7 +108,7 @@ function Form() {
   return (
     <div className="space-y-8 w-full max-w-3xl mx-auto px-4 sm:px-0 mt-20">
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Form Fields */}
+        {/* Recipient Name */}
         <div>
           <label className="block font-semibold mb-2 text-gray-700">Recipient Name</label>
           <input
@@ -104,6 +121,7 @@ function Form() {
           />
         </div>
 
+        {/* Message */}
         <div>
           <label className="block font-semibold mb-2 text-gray-700">Message</label>
           <textarea
@@ -115,6 +133,7 @@ function Form() {
           />
         </div>
 
+        {/* Song Search */}
         <div>
           <label className="block font-semibold mb-2 text-gray-700">Song</label>
           <input
@@ -137,7 +156,7 @@ function Form() {
                   onClick={() => {
                     setSongQuery(song.name);
                     setSelectedSong(song);
-                    setSongResults([]); // Clear search results when a song is selected
+                    setSongResults([]);
                   }}
                 >
                   <img
@@ -155,6 +174,7 @@ function Form() {
           )}
         </div>
 
+        {/* Selected Song Preview */}
         {selectedSong && (
           <div className="mt-4 p-4 bg-gray-100 border rounded-md flex items-center space-x-4">
             <img
@@ -170,6 +190,7 @@ function Form() {
           </div>
         )}
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-200"
@@ -178,6 +199,7 @@ function Form() {
         </button>
       </form>
 
+      {/* Submission Notification */}
       {isSubmitted && (
         <div className="mt-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-md text-center">
           Message Sent!

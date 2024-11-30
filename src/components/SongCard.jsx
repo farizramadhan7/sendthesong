@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCardContext } from '../context/CardContext';
-import { format } from 'date-fns'; // Import format from date-fns
+import { ref, get } from 'firebase/database';
+import { database } from '../firebase/firebaseConfig';
+import { format } from 'date-fns';
 
 function SongCard() {
-  const { id } = useParams();
-  const { cards } = useCardContext();
-  const card = cards.find(card => card.id === id);
+  const { id } = useParams(); // Mendapatkan ID dari URL
+  const [card, setCard] = useState(null); // State untuk menyimpan card
+
+  // Mengambil data card berdasarkan ID (UUID)
+  useEffect(() => {
+    const cardRef = ref(database, `cards/${id}`);
+    get(cardRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        setCard(snapshot.val());
+      } else {
+        setCard(null); // Jika card tidak ditemukan
+      }
+    });
+  }, [id]);
 
   if (!card) {
-    return <div>Card not found</div>;
+    return <div className="text-center mt-16 text-gray-500">Card not found</div>;
   }
+
+  const { recipientName, song, message, date } = card;
+  const { id: songId } = song;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen overflow-y-auto my-8">
@@ -18,7 +33,7 @@ function SongCard() {
         <h1 className="text-xl mb-4 mt-4">
           Hello,
           <span className="text-3xl ml-2" style={{ fontFamily: 'ReenieBeanie' }}>
-            {card.recipientName}
+            {recipientName}
           </span>
         </h1>
         <div className="max-w-md mx-auto">
@@ -27,7 +42,7 @@ function SongCard() {
           </p>
           <div className="w-full">
             <iframe
-              src={`https://open.spotify.com/embed/track/${card.song.id}`}
+              src={`https://open.spotify.com/embed/track/${songId}`}
               width="100%"
               height="240"
               frameBorder="0"
@@ -41,20 +56,12 @@ function SongCard() {
               className="text-4xl text-slate-500 mt-4"
               style={{ fontFamily: 'ReenieBeanie' }}
             >
-              {card.message}
+              {message}
             </p>
             <p className="text-sm text-slate-500 mt-4">
-              Sent on {format(new Date(card.date), 'MMMM dd, yyyy')}
+              Sent on {format(new Date(date), 'MMMM dd, yyyy')}
             </p>
           </div>
-        </div>
-        <div className="mt-7 flex flex-col items-center space-y-4">
-          <p className="text-slate-700">Want to send a song to a friend?</p>
-          <button
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-black text-white shadow hover:bg-primary/90 h-9 py-2 px-6"
-          >
-            Send a song
-          </button>
         </div>
       </div>
     </div>

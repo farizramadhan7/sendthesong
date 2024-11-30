@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { useCardContext } from '../context/CardContext';
 
-function Search({ setFilteredCards, setHasSearched }) {
+function Search({ cards, setFilteredCards, setHasSearched }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const { cards } = useCardContext();
 
   const handleSearch = () => {
-    const filtered = cards.filter(
-      (card) => card.recipientName.toLowerCase() === searchQuery.toLowerCase()
+    // Filter cards berdasarkan nama penerima
+    const filtered = cards.filter(({ recipientName }) =>
+      recipientName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setFilteredCards(filtered);
-    setHasSearched(true); // Mark as searched
+
+    setFilteredCards(filtered); // Set hasil pencarian ke state di CardBrowse
+    setHasSearched(true); // Tandai bahwa pencarian telah dilakukan
+  };
+
+  const handleInputChange = (e) => {
+    setSearchQuery(e.target.value); // Update nilai input
   };
 
   return (
@@ -19,7 +23,7 @@ function Search({ setFilteredCards, setHasSearched }) {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Enter recipient name..."
           className="w-full p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />

@@ -5,34 +5,25 @@ const CardContext = createContext();
 
 export const CardProvider = ({ children }) => {
   const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
 
   // Fetch cards from the backend when the app starts
   const fetchCards = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/cards');
       setCards(response.data);
+      setFilteredCards(response.data); // Set all cards as the initial filtered cards
     } catch (error) {
       console.error("Error fetching cards:", error);
     }
   };
 
-  // Fetch cards on initial load
   useEffect(() => {
     fetchCards();
   }, []);
 
-  // Function to add a new card
-  const addCard = async (newCard) => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/cards', newCard);
-      setCards((prevCards) => [...prevCards, response.data]);
-    } catch (error) {
-      console.error("Error adding card:", error);
-    }
-  };
-
   return (
-    <CardContext.Provider value={{ cards, addCard }}>
+    <CardContext.Provider value={{ cards, filteredCards, setFilteredCards }}>
       {children}
     </CardContext.Provider>
   );
