@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase/firebaseConfig';
-import Search from './Search'; // Import komponen Search
+import Search from './Search'; // Komponen Search tetap diimport
 
 function CardBrowse() {
   const [filteredCards, setFilteredCards] = useState([]);
@@ -27,17 +27,19 @@ function CardBrowse() {
       }
     });
 
-    return () => setAllCards([]);
+    return () => setAllCards([]); // Cleanup
   }, []);
 
   return (
     <div className="w-full h-full max-w-2xl mx-auto p-4 mt-16 flex-grow">
-      {/* Gunakan komponen Search */}
+      {/* Sembunyikan komponen Search */}
       <Search
-        cards={allCards} // Berikan semua kartu ke Search
-        setFilteredCards={setFilteredCards} // Fungsi untuk memperbarui kartu yang ditampilkan
-        setHasSearched={setHasSearched} // Tandai jika pencarian dilakukan
+        cards={allCards}
+        setFilteredCards={setFilteredCards}
+        setHasSearched={setHasSearched}
+        style={{ visibility: 'hidden' }} // Menyembunyikan Search
       />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
         {filteredCards.length > 0 ? (
           filteredCards.map((card) => {
