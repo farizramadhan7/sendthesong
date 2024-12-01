@@ -59,7 +59,7 @@ function CardBrowse() {
                 <div className="flex flex-col space-y-1.5 p-4">
                   <p className="text-sm font-medium text-gray-500 mb-6">To: {recipientName}</p>
                   <p
-                    className="text-4xl text-gray-800 mt-8"
+                    className="text-3xl text-gray-800 mt-8"
                     style={{
                       fontFamily: 'ReenieBeanie',
                       overflow: 'hidden',
